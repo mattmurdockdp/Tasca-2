@@ -1,4 +1,4 @@
-classdef DirectSolver
+classdef DirectSolver < SolverClass
     properties
         data
         K

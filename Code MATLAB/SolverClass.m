@@ -1,4 +1,4 @@
-classdef SolverClass
+classdef SolverClass < handle
     % Aquesta classe actua com a classe mare de les classe IterativeSolver i DirectSolver
     
     properties
@@ -6,19 +6,20 @@ classdef SolverClass
         solverObj
     end
     
-    methods
-        function obj = SolverClass(solverType, data, K, f, up, vp)
-            obj.solverType = solverType;
+    methods(Static, Access = public)
+        function obj = create(solverType, data, K, f, up, vp)
             switch solverType
                 case 'Direct'
-                    obj.solverObj = DirectSolver(data, K, f, up, vp);
+                    obj = DirectSolver(data, K, f, up, vp);
                 case 'Iterative'
-                    obj.solverObj = IterativeSolver(data, K, f, up, vp);
+                    obj = IterativeSolver(data, K, f, up, vp);
                 otherwise
-                    error('Tipo de solucionador no vàlid. Escull ''Direct'' o ''Iterative''.');
+                    error('Tipus de solucionador no vàlid. Escull ''Direct'' o ''Iterative''.');
             end
         end
-        
+    end
+
+    methods    
         function u = ComputeUL(obj)
             u = obj.solverObj.ComputeUL();
         end
@@ -26,5 +27,6 @@ classdef SolverClass
         function r = ComputeReactions(obj, u)
             r = obj.solverObj.ComputeReactions(u);
         end
-    end
+   end
+
 end

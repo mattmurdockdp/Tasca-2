@@ -1,11 +1,11 @@
-%% STRUCTURAL PROBLEM CODE STRUCTURE
+% STRUCTURAL PROBLEM CODE STRUCTURE
 
 clear
 close all
 
 %% PART 1
 
-%% PREPROCESS QUADRE
+% PREPROCESS QUADRE
 
 % Input data FRAME (define your input parameters here)
 data.ni = 2;  % Degrees of freedom per node
@@ -87,7 +87,7 @@ F = [% Each row is a point force component | column_1 = node, column_2 = directi
     5 2 -0.05*W
 ];
 
-%% SOLVER QUADRE
+% SOLVER QUADRE
 
 % Compute element stiffness matrices
 Kel = stiffnessFunction(data,x,Tn,m,Tm);
@@ -96,10 +96,10 @@ Kel = stiffnessFunction(data,x,Tn,m,Tm);
 fel = forceFunction(data,x,Tn,m,Tm); 
 
 % Assemble global stiffness matrix
-Assembly = GlobalStiffnessMatrixComputer(data,Td,Kel,fel);
+Assembly = GlobalStiffnessMatrix(data,x,Tn,Td,Tm,m,fel);
 
-K = Assembly.ComputeGSM();
-f = Assembly.ComputeF();
+K = Assembly.computeGSM();
+f = Assembly.computeF();
 
 % Apply prescribed DOFs
 ApplyBC = BoundaryConditionsClass(data,p);
@@ -113,7 +113,7 @@ f = pointLoads(data,Td,f,F);
 % Solver 
 TypeA = 'Direct'; TypeB = 'Iterative';
 
-SolverObj = SolverClass(TypeA,data,K,f,up,vp);
+SolverObj = SolverClass.create(TypeA,data,K,f,up,vp);
 u = SolverObj.ComputeUL;
 r = SolverObj.ComputeReactions(u);
 
@@ -121,7 +121,7 @@ r = SolverObj.ComputeReactions(u);
 sig = stressFunction(data,x,Tn,m,Tm,Td,u);
 
 
-%% POSTPROCESS QUADRE
+% POSTPROCESS QUADRE
 
 scale = 1000; % Set a number to visualize deformed structure properly
 units = 'Pa'; % Define in which units you're providing the stress vector

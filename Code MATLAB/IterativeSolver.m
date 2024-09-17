@@ -1,4 +1,4 @@
-classdef IterativeSolver
+classdef IterativeSolver < SolverClass
     properties
         data
         K
