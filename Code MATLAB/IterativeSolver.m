@@ -1,23 +1,28 @@
-classdef IterativeSolver < SolverClass
+classdef IterativeSolver < Solver
     properties
         data
+        x
+        Tn
+        Tm
+        Td
+        m
         K
         f
         up
         vp
         ndof
+        nne
+        nel
+        ni
+        np
     end
 
-    methods
-        function obj = IterativeSolver(data,K,f,up,vp)
-            obj.ndof = data.ndof;
-            obj.K = K;
-            obj.f = f;
-            obj.up = up;
-            obj.vp= vp;
+    methods (Access=public)
+        function obj = IterativeSolver(data,x,Tn,Tm,Td,m,K,f,up,vp)
+            obj.init(data,x,Tn,Tm,Td,m,K,f,up,vp)
         end
         
-        function [u,flag] = ComputeUL(obj)
+        function [u,flag] = computeUL(obj)
             
             % Vector DOFs lliures
             vf = setdiff((1:obj.ndof)',obj.vp);
@@ -34,7 +39,7 @@ classdef IterativeSolver < SolverClass
             [u(vf),flag] = pcg(obj.K(vf, vf),(obj.f(vf) - obj.K(vf, obj.vp) * u(obj.vp)),tol,maxit);
         end
 
-        function r = ComputeReactions(obj, u)
+        function r = computeReactions(obj, u)
             % Assegurar que f(obj.vp) sigui un vector columna
             f_vp = obj.f(obj.vp);  
             
@@ -42,6 +47,24 @@ classdef IterativeSolver < SolverClass
             r = obj.K(obj.vp, :) * u - f_vp;
         end
 
+    end
+    
+    methods (Access=private)  
+        function init(obj,data,x,Tn,Tm,Td,m,K,f,up,vp)
+            obj.ndof = data.ndof;
+            obj.nne=data.nne;
+            obj.nel=data.nel;
+            obj.ni=data.ni;
+            obj.x=x;
+            obj.Tn=Tn;
+            obj.Tm=Tm;
+            obj.Td=Td;
+            obj.m=m;
+            obj.K = K;
+            obj.f = f;
+            obj.up = up;
+            obj.vp= vp;
+        end
     end
 end
 

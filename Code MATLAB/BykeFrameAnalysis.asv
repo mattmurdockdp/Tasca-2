@@ -1,0 +1,26 @@
+classdef BykeFrameAnalysis < handle
+    
+    properties
+        objGSM
+        objF 
+    end
+    
+    methods(Static, Access = public)
+        function obj = getData(typeSolv,data,x,Tn,Tm,Td,m,p,F)
+            
+            objGSM = GlobalStiffnessMatrix(data,x,Tn,Td,Tm,m);
+
+        
+        
+        end
+    
+    end
+
+    methods
+    
+        function K = computeGSM(obj);
+            K =ob
+        end
+    end
+end
+

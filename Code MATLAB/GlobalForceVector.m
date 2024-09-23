@@ -12,22 +12,22 @@ classdef GlobalForceVector < handle
         Tn      % Matriu connectivitats nodals
         Tm      % Matriu connectivitats materials
         m       % Matriu propietats materials
+        F       % Forces Matrix
     end
     
     methods (Access = public)
         
         % Constructor
-        function obj = GlobalForceVector(data,x,Tn,Td,Tm,m)
-            obj.init(data,x,Tn,Td,Tm,m)
+        function obj = GlobalForceVector(data,x,Tn,Td,Tm,m,F)   
+            obj.init(data,x,Tn,Td,Tm,m,F)
         end
         
 
         % Mètode 1: Càlcul forces elementals
-        function fel = forceFunction(obj)
+        function fel = computeFel(obj)
             Xel = zeros(obj.nel,obj.nne*obj.ni);
             lcs = zeros(obj.nel,3);
             AO = zeros(obj.nel,2);
-
             for i=1:obj.nel                % FORCE FUNCTION BARRA A BARRA
                 for j=1:obj.nne            % Matriz Xel
                     Xel(i,2*j-1)=obj.x(obj.Tn(i,j),1);
@@ -53,15 +53,33 @@ classdef GlobalForceVector < handle
 
             % Matriu de forces de la barra en locals
             fel{i}=(-AO(i,2)*AO(i,1)/10^6)*(transpose(R{i})*[-1;0;1;0]);
-
             end
         end
-    
+        
+        % Method 2: Vector forces global sense point loads
+        function f = computeF(obj)
+
+        fel = computeFel(obj);
+
+        f = zeros(obj.ndof,1);
+            for e=1:obj.nel
+                for i=1:obj.nne*obj.ni
+                    f(obj.Td(e,i))=f(obj.Td(e,i))+fel{e}(i);
+                end
+            end
+
+       % Apply point loads
+            for i=1:size(obj.F,1)
+                I=nod2dof(obj.ni,obj.F(i,1),obj.F(i,2));
+                f(I)= f(I) + obj.F(i,3);
+            end
+        end
+
     end
 
     methods (Access = private)
         
-        function init(obj,data,x,Tn,Td,Tm,m)                
+        function init(obj,data,x,Tn,Td,Tm,m,F)                
             obj.Td = Td;    
             obj.x=x;
             obj.Tn=Tn;
@@ -71,7 +89,8 @@ classdef GlobalForceVector < handle
             obj.ndof = data.ndof;   
             obj.nel = data.nel;     
             obj.nne = data.nne;     
-            obj.ni = data.ni;               
+            obj.ni = data.ni;       
+            obj.F=F;
         end    
     end
 

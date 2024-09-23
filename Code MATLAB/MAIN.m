@@ -87,39 +87,19 @@ F = [% Each row is a point force component | column_1 = node, column_2 = directi
     5 2 -0.05*W
 ];
 
-% SOLVER QUADRE
+% SOLUTION BYKE FRAME
 
-% Compute element stiffness matrices
-Kel = stiffnessFunction(data,x,Tn,m,Tm);
+objGSM = BykeFrameAnalysis.getGSM(data,x,Tn,Td,Tm,m);
+K = objGSM.computeGSM();
 
-% Compute element force vectors
-fel = forceFunction(data,x,Tn,m,Tm); 
+objF = BykeFrameAnalysis.getF(data,x,Tn,Td,Tm,m,F);
+f = objF.computeF();
 
-% Assemble global stiffness matrix
-Assembly = GlobalStiffnessMatrix(data,x,Tn,Td,Tm,m,fel);
-
-K = Assembly.computeGSM();
-f = Assembly.computeF();
-
-% Apply prescribed DOFs
-ApplyBC = BoundaryConditionsClass(data,p);
-
-vp = ApplyBC.SetVp;
-up = ApplyBC.SetUp;
-
-% Apply point loads
-f = pointLoads(data,Td,f,F);
-
-% Solver 
-TypeA = 'Direct'; TypeB = 'Iterative';
-
-SolverObj = SolverClass.create(TypeA,data,K,f,up,vp);
-u = SolverObj.ComputeUL;
-r = SolverObj.ComputeReactions(u);
-
-% Compute stress
-sig = stressFunction(data,x,Tn,m,Tm,Td,u);
-
+TypeA = 'Direct'; TypeB = 'Iterative'; TypeSolver=TypeA;
+ObjSol = BykeFrameAnalysis.getSol(TypeSolver,data,x,Tn,Tm,Td,m,K,f,p);
+u = ObjSol.computeUL();
+r = ObjSol.computeReactions(u);
+sig = ObjSol.computeStress(u);
 
 % POSTPROCESS QUADRE
 

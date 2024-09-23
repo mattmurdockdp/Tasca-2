@@ -2,7 +2,6 @@ classdef GlobalStiffnessMatrix < handle
     properties (Access = private)
         data    % Dades generals d'entrada
         Td      % Matriu connectivitats DOFs
-        fel     % Fuerzas de los elementos
         nnod    % Nombre total de nodes
         ndof    % Graus de llibertat totals
         nel     % Nombre d'elements
@@ -18,8 +17,8 @@ classdef GlobalStiffnessMatrix < handle
         
 
         % Constructor
-        function obj = GlobalStiffnessMatrix(data,x,Tn,Td,Tm,m,fel)
-            obj.init(data,x,Tn,Td,Tm,m,fel)
+        function obj = GlobalStiffnessMatrix(data,x,Tn,Td,Tm,m)
+            obj.init(data,x,Tn,Td,Tm,m)
         end
         
 
@@ -63,20 +62,11 @@ classdef GlobalStiffnessMatrix < handle
             end
         end
 
-
-        function f = computeF(obj)
-        f = zeros(obj.ndof,1);
-            for e=1:obj.nel
-                for i=1:obj.nne*obj.ni
-                    f(obj.Td(e,i))=f(obj.Td(e,i))+obj.fel{e}(i);
-                end
-            end
-        end
     end
 
 
     methods (Access = private)
-        function init(obj,data,x,Tn,Td,Tm,m,fel)                
+        function init(obj,data,x,Tn,Td,Tm,m)                
             obj.Td = Td;    
             obj.x=x;
             obj.Tn=Tn;
@@ -86,8 +76,7 @@ classdef GlobalStiffnessMatrix < handle
             obj.ndof = data.ndof;   
             obj.nel = data.nel;     
             obj.nne = data.nne;     
-            obj.ni = data.ni;       
-            obj.fel = fel;          
+            obj.ni = data.ni;              
         end
     end
 end
