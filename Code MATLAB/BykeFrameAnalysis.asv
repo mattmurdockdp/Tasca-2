@@ -23,6 +23,7 @@ classdef BykeFrameAnalysis < handle
             f = obj.computeF();
 
             u = obj.computeDisplacement(K,f);
+            sig = objSolver.computeStress(u);
            
         end
 
@@ -67,7 +68,6 @@ classdef BykeFrameAnalysis < handle
             objSolver = Solver.create(s);
             u = objSolver.computeUL();
         end
-
     end
 
 end

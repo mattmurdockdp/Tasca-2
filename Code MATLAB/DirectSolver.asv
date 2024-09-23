@@ -8,6 +8,8 @@ classdef DirectSolver < Solver
         m
         K
         f
+        up
+        vp
         ndof
         nne
         nel
@@ -19,7 +21,7 @@ classdef DirectSolver < Solver
     methods (Access=public)
         function obj = DirectSolver(s)
             obj.init(s)
-            obj.calculatePrescDOFS();
+            obj.calculatePrescDOFS()
         end
         
         function u = computeUL(obj)

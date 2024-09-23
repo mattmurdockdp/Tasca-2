@@ -8,13 +8,12 @@ classdef IterativeSolver < Solver
         m
         K
         f
-        up
-        vp
         ndof
         nne
         nel
         ni
         np
+        p
     end
 
     methods (Access=public)

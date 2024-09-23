@@ -89,20 +89,29 @@ F = [% Each row is a point force component | column_1 = node, column_2 = directi
 
 % SOLUTION BYKE FRAME
 
+objGSM = BykeFrameAnalysis.getGSM(data,x,Tn,Td,Tm,m);
+K = objGSM.computeGSM();
+
+objF = BykeFrameAnalysis.getF(data,x,Tn,Td,Tm,m,F);
+f = objF.computeF();
+
 TypeA = 'Direct'; TypeB = 'Iterative'; TypeSolver=TypeA;
 
-s.solverType = TypeSolver;
-s.data       = data;
-s.x          = x;
-s.Tn         = Tn;
-s.Tm         = Tm;
-s.Td         = Td;
-s.m          = m;
-s.p          = p;
-s.F          = F;
+s.TypeSolv = TypeSolver;
+s.data     = data;
+s.x        = x;
+s.Tn       = Tn;
+s.Tm       = Tm;
+s.Td       = Td;
+s.m        = m;
+s.K=K;
+s.f=f;
+s.p=p;
 
-analysis = BykeFrameAnalysis(s);
-[u,sig] = analysis.computeSolution();
+ObjSol = BykeFrameAnalysis.getSol(TypeSolver,data,x,Tn,Tm,Td,m,K,f,p);
+u = ObjSol.computeUL();
+r = ObjSol.computeReactions(u);
+sig = ObjSol.computeStress(u);
 
 % POSTPROCESS QUADRE
 

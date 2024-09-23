@@ -3,36 +3,40 @@ classdef Solver < handle
     
     properties
         solverType
+        up
+        vp
     end
 
     methods(Static, Access = public)
-        function obj = chooseType(solverType,data,x,Tn,Tm,Td,m,K,f,p)
+        function obj = create(s)
 
-        % Boundary Conditions
-        np = size(p,1);
-        vp = zeros(1,np);
-        up = zeros(1,np);
-
-        for i=1:np
-            vp(i)=nod2dof(data.ni,p(i,1),p(i,2));
-        end
-
-        for i=1:np
-            up(i)=p(i,3);
-        end
-        
         % Set Solver Type and create instance 
-            switch solverType
+            switch s.solverType
                 case 'Direct'
-                    obj = DirectSolver(data,x,Tn,Tm,Td,m,K,f,up,vp);
+                    obj = DirectSolver(s);
                 case 'Iterative'
-                    obj = IterativeSolver(data,x,Tn,Tm,Td,m,K,f,up,vp);
+                    obj = IterativeSolver(s);
                 otherwise
                     error('Tipus de solucionador no vàlid. Escull ''Direct'' o ''Iterative''.');
             end
         end
     end
+    methods (Access=protected)
+        function calculatePrescDOFS(obj)
+            
+            % Boundary Conditions
+            np = size(obj.p,1);
 
+            for i=1:np
+                obj.vp(i)=nod2dof(obj.ni,obj.p(i,1),obj.p(i,2));
+            end
+
+            for i=1:np
+                obj.up(i)=obj.p(i,3);
+            end
+        end
+
+    end
     methods    
         function u = computeUL(obj)
             u = obj.computeUL();
