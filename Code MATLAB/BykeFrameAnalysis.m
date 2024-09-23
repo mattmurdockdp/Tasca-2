@@ -7,6 +7,8 @@ classdef BykeFrameAnalysis < handle
         Tm      % Matriu connectivitats materials
         m       % Matriu propietats materials
         F       % Matriu Forces
+        solverType
+        p
     end
 
     methods (Access=public)
