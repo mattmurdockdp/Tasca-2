@@ -1,10 +1,23 @@
 classdef Solver < handle
-    % Aquesta classe actua com a classe mare de les classe IterativeSolver i DirectSolver
-    
+    % Aquesta classe actua com a classe mare de les classe IterativeSolver i DirectSolver    
     properties
         solverType
         up
         vp
+        data
+        x
+        Tn
+        Tm
+        Td
+        m
+        K
+        f
+        ndof
+        nne
+        nel
+        ni
+        np
+        p
     end
 
     methods(Static, Access = public)
@@ -25,13 +38,13 @@ classdef Solver < handle
         function calculatePrescDOFS(obj)
             
             % Boundary Conditions
-            np = size(obj.p,1);
+            numberDOFS = size(obj.p,1);
 
-            for i=1:np
+            for i=1:numberDOFS
                 obj.vp(i)=nod2dof(obj.ni,obj.p(i,1),obj.p(i,2));
             end
 
-            for i=1:np
+            for i=1:numberDOFS
                 obj.up(i)=obj.p(i,3);
             end
         end
@@ -79,6 +92,21 @@ classdef Solver < handle
             eps(i)=(1/lcs(i,1))*[-1 0 1 0]*R{i}*uel; % Adimensional
             sig(i)=10^6*OE(i,2)*eps(i)+OE(i,1);      % Transformado a Pascales
             end
+        end
+    end
+
+    methods (Access=private)  
+        function init(obj,s)
+            obj.ndof = s.data.ndof;
+            obj.nne=s.data.nne;
+            obj.nel=s.data.nel;
+            obj.ni=s.data.ni;
+            obj.x=s.x;
+            obj.Tn=s.Tn;
+            obj.Tm=s.Tm;
+            obj.Td=s.Td;
+            obj.m=s.m;
+            obj.p=s.p;
         end
     end
 

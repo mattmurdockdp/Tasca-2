@@ -1,19 +1,6 @@
 classdef DirectSolver < Solver
     properties
-        data
-        x
-        Tn
-        Tm
-        Td
-        m
-        K
-        f
-        ndof
-        nne
-        nel
-        ni
-        np
-        p
+
     end
 
     methods (Access=public)

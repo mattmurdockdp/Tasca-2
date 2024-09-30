@@ -102,7 +102,7 @@ s.p          = p;
 s.F          = F;
 
 analysis = BykeFrameAnalysis(s);
-[u,sig] = analysis.computeSolution();
+[u,sig] = analysis.computeSolution(analysis);
 
 % POSTPROCESS QUADRE
 
